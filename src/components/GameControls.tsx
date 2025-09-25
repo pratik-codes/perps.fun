@@ -76,9 +76,14 @@ export const GameControls = ({ onLong, onShort, balance, leverage, onLeverageCha
         <div className="mb-3 p-2 bg-primary/10 rounded border border-primary/30">
           <div className="flex justify-between items-center text-sm">
             <span className="text-primary font-medium">🎯 {currentPosition.type} Active</span>
-            <span className={`font-bold ${currentPosition.pnl >= 0 ? 'text-profit' : 'text-loss'}`}>
-              {currentPosition.pnl >= 0 ? '+' : ''}{currentPosition.pnl.toFixed(1)}%
-            </span>
+            <div className="text-right">
+              <div className={`font-bold ${currentPosition.pnl >= 0 ? 'text-profit' : 'text-loss'}`}>
+                {currentPosition.pnl >= 0 ? '+' : ''}{currentPosition.pnl.toFixed(1)}%
+              </div>
+              <div className={`text-xs font-medium ${currentPosition.pnl >= 0 ? 'text-profit' : 'text-loss'}`}>
+                {currentPosition.pnl >= 0 ? '+' : ''}${((currentPosition.size * currentPosition.pnl) / 100).toFixed(2)}
+              </div>
+            </div>
           </div>
           <div className="text-xs text-muted-foreground mt-1">
             ${currentPosition.size.toFixed(0)} @ {currentPosition.leverage}x • Entry: ${currentPosition.entryPrice.toFixed(2)}

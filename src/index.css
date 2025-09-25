@@ -1,0 +1,299 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    /* 🎮 Pixel Degen Gaming Theme 🎮 */
+    --background: 0 0% 4%;
+    --foreground: 0 0% 95%;
+
+    --card: 0 0% 8%;
+    --card-foreground: 0 0% 95%;
+
+    --popover: 0 0% 6%;
+    --popover-foreground: 0 0% 95%;
+
+    /* Neon Gaming Colors */
+    --primary: 142 100% 60%;  /* Neon green */
+    --primary-foreground: 0 0% 5%;
+
+    --secondary: 0 0% 12%;
+    --secondary-foreground: 0 0% 95%;
+
+    --muted: 0 0% 10%;
+    --muted-foreground: 0 0% 65%;
+
+    --accent: 280 100% 70%;  /* Neon pink/purple */
+    --accent-foreground: 0 0% 5%;
+
+    --destructive: 0 100% 60%;
+    --destructive-foreground: 0 0% 98%;
+
+    --success: 142 100% 60%;
+    --success-foreground: 0 0% 5%;
+
+    --warning: 60 100% 60%;  /* Neon yellow */
+    --warning-foreground: 0 0% 5%;
+
+    --border: 0 0% 18%;
+    --input: 0 0% 12%;
+    --ring: 142 100% 60%;
+
+    --radius: 2px;  /* Pixelated corners */
+
+    /* Enhanced Gaming Colors */
+    --profit-green: 142 100% 60%;
+    --loss-red: 0 100% 65%;
+    --chart-green: 120 100% 50%;
+    --chart-red: 0 100% 55%;
+    --connect-blue: 200 100% 70%;
+    --notification-red: 0 100% 65%;
+    --level-gold: 60 100% 60%;
+    
+    /* New Gaming Colors */
+    --neon-cyan: 180 100% 60%;
+    --neon-purple: 280 100% 70%;
+    --neon-orange: 30 100% 60%;
+    --pixel-gray: 0 0% 25%;
+
+    /* Enhanced Gradients */
+    --gradient-profit: linear-gradient(135deg, hsl(142 100% 60%), hsl(120 100% 50%));
+    --gradient-loss: linear-gradient(135deg, hsl(0 100% 65%), hsl(0 100% 55%));
+    --gradient-glow: linear-gradient(135deg, hsl(142 100% 60% / 0.3), hsl(142 100% 60% / 0.1));
+    --gradient-neon: linear-gradient(45deg, hsl(142 100% 60%), hsl(180 100% 60%), hsl(280 100% 70%));
+    --gradient-bg: linear-gradient(135deg, hsl(0 0% 4%), hsl(0 0% 6%), hsl(0 0% 4%));
+
+    /* Enhanced Shadows & Glows */
+    --shadow-glow-green: 0 0 30px hsl(142 100% 60% / 0.4), 0 0 60px hsl(142 100% 60% / 0.2);
+    --shadow-glow-red: 0 0 30px hsl(0 100% 65% / 0.4), 0 0 60px hsl(0 100% 65% / 0.2);
+    --shadow-glow-cyan: 0 0 30px hsl(180 100% 60% / 0.4), 0 0 60px hsl(180 100% 60% / 0.2);
+    --shadow-glow-purple: 0 0 30px hsl(280 100% 70% / 0.4), 0 0 60px hsl(280 100% 70% / 0.2);
+    --shadow-card: 0 4px 20px hsl(0 0% 0% / 0.6), 0 0 10px hsl(142 100% 60% / 0.1);
+    --shadow-pixel: 2px 2px 0px hsl(0 0% 0% / 0.8), 4px 4px 0px hsl(0 0% 0% / 0.4);
+
+    /* Animations */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    --transition-glow: all 0.2s ease-in-out;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'JetBrains Mono', 'Orbitron', monospace;
+    overflow: hidden;
+    background: var(--gradient-bg);
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+  }
+
+  /* Gaming Font Classes */
+  .font-pixel {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.8rem;
+    line-height: 1.6;
+  }
+  
+  .font-orbitron {
+    font-family: 'Orbitron', monospace;
+  }
+  
+  .font-gaming {
+    font-family: 'Fredoka One', cursive;
+  }
+
+  /* 🎮 Enhanced Gaming UI Animations & Effects 🎮 */
+  .glow-green {
+    box-shadow: var(--shadow-glow-green);
+    transition: var(--transition-glow);
+  }
+
+  .glow-red {
+    box-shadow: var(--shadow-glow-red);
+    transition: var(--transition-glow);
+  }
+  
+  .glow-cyan {
+    box-shadow: var(--shadow-glow-cyan);
+    transition: var(--transition-glow);
+  }
+  
+  .glow-purple {
+    box-shadow: var(--shadow-glow-purple);
+    transition: var(--transition-glow);
+  }
+
+  .pulse-green {
+    animation: pulse-green 2s infinite;
+  }
+
+  .pulse-red {
+    animation: pulse-red 2s infinite;
+  }
+  
+  .pulse-neon {
+    animation: pulse-neon 3s infinite;
+  }
+  
+  .pixel-border {
+    border: 2px solid;
+    border-image: linear-gradient(45deg, 
+      hsl(var(--primary)), 
+      hsl(var(--accent)), 
+      hsl(var(--primary))
+    ) 1;
+    box-shadow: var(--shadow-pixel);
+  }
+  
+  .retro-scanlines::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(transparent 50%, rgba(0, 255, 0, 0.02) 50%);
+    background-size: 100% 4px;
+    pointer-events: none;
+    z-index: 1;
+  }
+  
+  .arcade-button {
+    background: var(--gradient-neon);
+    border: 3px solid hsl(var(--primary));
+    border-radius: 8px;
+    box-shadow: 
+      var(--shadow-pixel),
+      inset 0 2px 0 rgba(255, 255, 255, 0.2),
+      inset 0 -2px 0 rgba(0, 0, 0, 0.3);
+    transform: translateY(0);
+    transition: all 0.1s ease;
+  }
+  
+  .arcade-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 
+      var(--shadow-pixel),
+      var(--shadow-glow-green),
+      inset 0 2px 0 rgba(255, 255, 255, 0.3);
+  }
+  
+  .arcade-button:active {
+    transform: translateY(1px);
+    box-shadow: 
+      1px 1px 0px hsl(0 0% 0% / 0.8),
+      inset 0 2px 0 rgba(0, 0, 0, 0.3);
+  }
+
+  @keyframes pulse-green {
+    0%, 100% { 
+      box-shadow: 0 0 5px hsl(var(--profit-green) / 0.5);
+      filter: brightness(1);
+    }
+    50% { 
+      box-shadow: var(--shadow-glow-green);
+      filter: brightness(1.2);
+    }
+  }
+
+  @keyframes pulse-red {
+    0%, 100% { 
+      box-shadow: 0 0 5px hsl(var(--loss-red) / 0.5);
+      filter: brightness(1);
+    }
+    50% { 
+      box-shadow: var(--shadow-glow-red);
+      filter: brightness(1.2);
+    }
+  }
+  
+  @keyframes pulse-neon {
+    0%, 100% { 
+      text-shadow: 0 0 5px currentColor;
+    }
+    50% { 
+      text-shadow: 
+        0 0 10px currentColor,
+        0 0 20px currentColor,
+        0 0 30px currentColor;
+    }
+  }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-2px); }
+    20%, 40%, 60%, 80% { transform: translateX(2px); }
+  }
+  
+  @keyframes glitch {
+    0%, 100% { 
+      transform: translateX(0);
+      filter: hue-rotate(0deg);
+    }
+    20% { 
+      transform: translateX(-2px);
+      filter: hue-rotate(5deg);
+    }
+    40% { 
+      transform: translateX(2px);
+      filter: hue-rotate(-5deg);
+    }
+    60% { 
+      transform: translateX(-1px);
+      filter: hue-rotate(10deg);
+    }
+    80% { 
+      transform: translateX(1px);
+      filter: hue-rotate(-10deg);
+    }
+  }
+  
+  @keyframes neon-flicker {
+    0%, 100% { opacity: 1; }
+    2% { opacity: 0.8; }
+    4% { opacity: 1; }
+    6% { opacity: 0.9; }
+    8% { opacity: 1; }
+  }
+
+  .shake {
+    animation: shake 0.5s;
+  }
+  
+  .glitch {
+    animation: glitch 0.3s;
+  }
+  
+  .neon-flicker {
+    animation: neon-flicker 2s infinite;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--muted));
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--border));
+    border-radius: 2px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground));
+  }
+}

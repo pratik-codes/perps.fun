@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface ChatMessage {
@@ -34,6 +36,7 @@ interface ChatSidebarProps {
 
 export const ChatSidebar = ({ solPrice, isArenaActive, tradeMarkers }: ChatSidebarProps) => {
   const [onlineCount, setOnlineCount] = useState(1247);
+  const [userInput, setUserInput] = useState("");
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
     {
       id: '1',
@@ -160,6 +163,31 @@ export const ChatSidebar = ({ solPrice, isArenaActive, tradeMarkers }: ChatSideb
     });
   };
 
+  const addUserMessage = (message: string) => {
+    const userMessage: ChatMessage = {
+      id: Math.random().toString(36),
+      username: "You",
+      message: message,
+      level: 1,
+      timestamp: new Date(),
+      type: 'chat',
+      verified: false
+    };
+
+    setChatMessages(prev => {
+      const updated = [...prev.slice(-20), userMessage]; // Keep last 20 messages
+      return updated;
+    });
+  };
+
+  const handleSubmitMessage = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (userInput.trim()) {
+      addUserMessage(userInput.trim());
+      setUserInput("");
+    }
+  };
+
   // Add messages based on trade markers
   useEffect(() => {
     if (tradeMarkers.length > 0) {
@@ -239,9 +267,9 @@ export const ChatSidebar = ({ solPrice, isArenaActive, tradeMarkers }: ChatSideb
           <div className="w-2 h-2 bg-profit rounded-full animate-pulse"></div>
           <span className="text-sm text-muted-foreground">online ({onlineCount.toLocaleString()})</span>
         </div>
-        <div className="text-xs text-profit font-bold mt-1">Arena: SOL-USDT Perps | Winner Takes All</div>
+        <div className="text-xs text-profit font-bold mt-1">Arena: SOL-USDT Perps</div>
         
-        <div className="flex items-center space-x-2 mt-2">
+        {/* <div className="flex items-center space-x-2 mt-2">
           <div className="w-8 h-8 bg-muted rounded-full flex items-center justify-center">
             <span className="text-xs">💬</span>
           </div>
@@ -251,11 +279,11 @@ export const ChatSidebar = ({ solPrice, isArenaActive, tradeMarkers }: ChatSideb
           <div className="w-8 h-8 bg-muted rounded-full flex items-center justify-center">
             <span className="text-xs">⚫</span>
           </div>
-        </div>
+        </div> */}
       </div>
 
       {/* Chat Messages */}
-      <div className="flex-1 overflow-y-auto p-2 chat-messages">
+      <div className="flex-1 overflow-y-auto p-2 chat-messages" style={{ minHeight: 0 }}>
         {chatMessages.length === 0 && (
           <div className="p-4 text-center text-muted-foreground text-sm">
             Chat loading...
@@ -270,7 +298,7 @@ export const ChatSidebar = ({ solPrice, isArenaActive, tradeMarkers }: ChatSideb
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.3, ease: "easeOut" }}
               className={`p-3 hover:bg-muted/50 border-b border-border/50 ${
-                message.type === 'trade' ? 'bg-primary/5' : ''
+                message.type === 'trade' ? 'bg-primary/5' : message.username === 'You' ? 'bg-green-500/10' : ''
               }`}
             >
               <div className="flex items-start space-x-2">
@@ -300,14 +328,28 @@ export const ChatSidebar = ({ solPrice, isArenaActive, tradeMarkers }: ChatSideb
         </AnimatePresence>
       </div>
 
-      {/* Chat Input */}
-      <div className="p-4 border-t border-border">
-        <div className="text-xs text-muted-foreground text-center">
-          Please connect wallet to chat
-        </div>
-        <div className="mt-2">
-          <button className="text-xs text-primary hover:underline">Chat Rules</button>
-          <span className="text-xs text-muted-foreground ml-2">📋 ❓</span>
+      {/* Chat Input - Always Visible */}
+      <div className="flex-shrink-0 p-3 border-t-2 border-profit/30 bg-card/95 backdrop-blur-sm min-h-[100px] mb-20">
+        <form onSubmit={handleSubmitMessage} className="flex space-x-2 mb-3">
+          <Input
+            value={userInput}
+            onChange={(e) => setUserInput(e.target.value)}
+            placeholder="Type a message..."
+            className="flex-1 text-sm h-10 border-2 border-profit/20 focus:border-profit/50"
+            maxLength={100}
+          />
+          <Button 
+            type="submit" 
+            size="sm" 
+            disabled={!userInput.trim()}
+            className="bg-profit hover:bg-profit/80 text-black font-semibold"
+          >
+            Send
+          </Button>
+        </form>
+        <div className="flex justify-between items-center text-xs">
+          <button className="text-profit hover:underline font-medium">Chat Rules</button>
+          <span className="text-muted-foreground">📋 ❓</span>
         </div>
       </div>
     </div>

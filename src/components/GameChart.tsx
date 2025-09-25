@@ -48,11 +48,42 @@ interface GameChartProps {
   onShortAction?: (amount: number) => void;
 }
 
+// Helper function to generate initial candles with mixed red/green colors
+const generateInitialCandles = (startPrice: number, count: number = 5): Candlestick[] => {
+  const candles: Candlestick[] = [];
+  let currentPrice = startPrice;
+  const baseTime = Date.now() - (count * 4000); // Space them 4 seconds apart
+  
+  for (let i = 0; i < count; i++) {
+    const isGreen = Math.random() > 0.5;
+    const volatility = 0.02; // 2% max change
+    const priceChange = (Math.random() - 0.5) * currentPrice * volatility;
+    
+    const open = currentPrice;
+    const close = currentPrice + priceChange;
+    const high = Math.max(open, close) + (Math.random() * currentPrice * 0.01);
+    const low = Math.min(open, close) - (Math.random() * currentPrice * 0.01);
+    
+    candles.push({
+      open,
+      high,
+      low,
+      close,
+      time: baseTime + (i * 4000),
+      age: Date.now() - (baseTime + (i * 4000))
+    });
+    
+    currentPrice = close;
+  }
+  
+  return candles;
+};
+
 export const GameChart = ({ solPrice, isArenaActive, arenaTimer, totalPot, tradeMarkers, onLongAction, onShortAction }: GameChartProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [candlesticks, setCandlesticks] = useState<Candlestick[]>([
-    { open: 180.45, high: 180.45, low: 180.45, close: 180.45, time: Date.now(), age: 0 }
-  ]);
+  const [candlesticks, setCandlesticks] = useState<Candlestick[]>(
+    generateInitialCandles(180.45)
+  );
   const [groupedTrades, setGroupedTrades] = useState<GroupedTrade[]>([]);
   const [tradeActions, setTradeActions] = useState<TradeAction[]>([]);
   const [previousArenaActive, setPreviousArenaActive] = useState(isArenaActive);
@@ -398,22 +429,13 @@ export const GameChart = ({ solPrice, isArenaActive, arenaTimer, totalPot, trade
       setGroupedTrades([]);
       setTradeActions([]);
     } else if (!previousArenaActive && isArenaActive) {
-      // New arena started - add separator candle and reset scroll
-      setCandlesticks(prev => {
-        const lastCandle = prev[prev.length - 1];
-        return [...prev, {
-          open: lastCandle.close,
-          high: lastCandle.close,
-          low: lastCandle.close,
-          close: lastCandle.close,
-          time: Date.now(),
-          age: 0
-        }];
-      });
+      // New arena started - generate new initial candles and reset scroll
+      const lastPrice = solPrice || 180.45;
+      setCandlesticks(generateInitialCandles(lastPrice));
       setScrollOffset(0);
     }
     setPreviousArenaActive(isArenaActive);
-  }, [isArenaActive, previousArenaActive]);
+  }, [isArenaActive, previousArenaActive, solPrice]);
 
   // Auto-scroll to keep latest candles visible (centered)
   useEffect(() => {

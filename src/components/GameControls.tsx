@@ -9,6 +9,7 @@ interface GameControlsProps {
   balance: number;
   leverage: number;
   onLeverageChange: (leverage: number) => void;
+  isArenaActive: boolean;
   currentPosition?: {
     type: 'Long' | 'Short';
     entryPrice: number;
@@ -19,7 +20,7 @@ interface GameControlsProps {
   };
 }
 
-export const GameControls = ({ onLong, onShort, balance, leverage, onLeverageChange, currentPosition }: GameControlsProps) => {
+export const GameControls = ({ onLong, onShort, balance, leverage, onLeverageChange, isArenaActive, currentPosition }: GameControlsProps) => {
   const [positionSize, setPositionSize] = useState(50.00);
   const [sizePercent, setSizePercent] = useState([10]);
   const [selectedEntry, setSelectedEntry] = useState<'percent' | 'fixed'>('fixed');
@@ -93,7 +94,7 @@ export const GameControls = ({ onLong, onShort, balance, leverage, onLeverageCha
             <Button
               className="flex-1 h-10 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold"
               onClick={handleQuickLong}
-              disabled={positionSize <= 0 || positionSize > balance}
+              disabled={!isArenaActive || positionSize <= 0 || positionSize > balance || !!currentPosition}
             >
               📈 LONG
             </Button>
@@ -101,7 +102,7 @@ export const GameControls = ({ onLong, onShort, balance, leverage, onLeverageCha
             <Button
               className="flex-1 h-10 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-bold"
               onClick={handleQuickShort}
-              disabled={positionSize <= 0 || positionSize > balance}
+              disabled={!isArenaActive || positionSize <= 0 || positionSize > balance || !!currentPosition}
             >
               📉 SHORT
             </Button>
@@ -272,7 +273,7 @@ export const GameControls = ({ onLong, onShort, balance, leverage, onLeverageCha
                         <Button
                           className="flex-1 h-16 bg-gradient-to-br from-emerald-500 via-green-500 to-green-600 hover:from-emerald-600 hover:via-green-600 hover:to-green-700 text-white font-bold text-lg shadow-xl border-2 border-emerald-400"
                           onClick={handleLong}
-                          disabled={positionSize <= 0 || positionSize > balance}
+                          disabled={!isArenaActive || positionSize <= 0 || positionSize > balance || !!currentPosition}
                         >
                           <div className="flex flex-col items-center">
                             <span className="font-black">LONG</span>
@@ -283,7 +284,7 @@ export const GameControls = ({ onLong, onShort, balance, leverage, onLeverageCha
                         <Button
                           className="flex-1 h-16 bg-gradient-to-br from-red-500 via-rose-500 to-red-600 hover:from-red-600 hover:via-rose-600 hover:to-red-700 text-white font-bold text-lg shadow-xl border-2 border-red-400"
                           onClick={handleShort}
-                          disabled={positionSize <= 0 || positionSize > balance}
+                          disabled={!isArenaActive || positionSize <= 0 || positionSize > balance || !!currentPosition}
                         >
                           <div className="flex flex-col items-center">
                             <span className="font-black">SHORT</span>

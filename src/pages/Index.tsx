@@ -11,12 +11,12 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const Index = () => {
   const [balance] = useState(1000.00); // Start with $1000 for arena battles
-  const [leverage, setLeverage] = useState(10); // Default to 10x leverage for DegenWars
+  const [leverage, setLeverage] = useState(10); // Default to 10x leverage for levs.fun
   const { 
     solPrice,
-    isArenaActive,
+    gameState,
     arenaTimer,
-    arenaEnded,
+    countdownTimer,
     winner,
     leaderboard,
     roundType,
@@ -24,7 +24,10 @@ const Index = () => {
     userPosition,
     tradeMarkers,
     openLong,
-    openShort
+    openShort,
+    // Legacy support
+    isArenaActive,
+    arenaEnded
   } = useGameLogic();
 
   const handleLong = (size: number, leverage: number) => {
@@ -58,8 +61,8 @@ const Index = () => {
         
         {/* Main Game Area */}
         <div className="flex-1 flex flex-col">
-          {/* Game Chart */}
-          <div className="flex-1 p-4 min-h-0">
+          {/* Game Chart with overlay container */}
+          <div className="flex-1 p-4 min-h-0 relative">
             <GameChart 
               solPrice={solPrice}
               isArenaActive={isArenaActive}
@@ -67,6 +70,107 @@ const Index = () => {
               totalPot={totalPot}
               tradeMarkers={tradeMarkers}
             />
+            
+            {/* Initial Countdown Overlay - Only covers chart area */}
+            <AnimatePresence>
+              {gameState === 'initial_countdown' && (
+                <motion.div
+                  className="absolute inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 rounded-lg"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                >
+                  <div className="text-center">
+                    <motion.div
+                      className="mb-6 flex justify-center"
+                      initial={{ scale: 0.5, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ duration: 0.8 }}
+                    >
+                      <img 
+                        src="/levs-logo-hori.png" 
+                        alt="levs.fun Logo" 
+                        className="h-16 w-auto"
+                      />
+                    </motion.div>
+                    
+                    <motion.div
+                      className="text-lg text-muted-foreground mb-6"
+                      initial={{ y: 30, opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      transition={{ duration: 0.6, delay: 0.3 }}
+                    >
+                      Get ready for the ultimate leverage battle!
+                    </motion.div>
+
+                    <motion.div
+                      className="text-6xl font-bold text-profit mb-4"
+                      animate={{ 
+                        scale: [1, 1.1, 1],
+                        textShadow: ["0 0 20px rgba(0, 255, 136, 0.5)", "0 0 40px rgba(0, 255, 136, 0.8)", "0 0 20px rgba(0, 255, 136, 0.5)"]
+                      }}
+                      transition={{ duration: 1, repeat: Infinity }}
+                      key={countdownTimer}
+                    >
+                      {countdownTimer}
+                    </motion.div>
+                    
+                    <motion.div
+                      className="text-lg text-muted-foreground"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.6 }}
+                    >
+                      Next round starting in...
+                    </motion.div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+            
+            {/* Between Rounds Countdown Overlay */}
+            <AnimatePresence>
+              {gameState === 'between_rounds_countdown' && (
+                <motion.div
+                  className="absolute inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 rounded-lg"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                >
+                  <div className="text-center">
+                    <motion.div
+                      className="text-3xl font-bold text-foreground mb-4"
+                      initial={{ scale: 0, y: -30 }}
+                      animate={{ scale: 1, y: 0 }}
+                      transition={{ duration: 0.6 }}
+                    >
+                      ⚡ NEXT ROUND
+                    </motion.div>
+                    
+                    <motion.div
+                      className="text-5xl font-bold text-profit mb-4"
+                      animate={{ 
+                        scale: [1, 1.1, 1],
+                        textShadow: ["0 0 20px rgba(0, 255, 136, 0.5)", "0 0 40px rgba(0, 255, 136, 0.8)", "0 0 20px rgba(0, 255, 136, 0.5)"]
+                      }}
+                      transition={{ duration: 1, repeat: Infinity }}
+                      key={countdownTimer}
+                    >
+                      {countdownTimer}
+                    </motion.div>
+                    
+                    <motion.div
+                      className="text-lg text-muted-foreground"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.3 }}
+                    >
+                      Get ready to trade!
+                    </motion.div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
           
           {/* Game Controls - Fixed Height */}
@@ -77,6 +181,7 @@ const Index = () => {
               balance={balance}
               leverage={leverage}
               onLeverageChange={setLeverage}
+              isArenaActive={isArenaActive}
               currentPosition={userPosition}
             />
           </div>
@@ -89,7 +194,6 @@ const Index = () => {
           tradeMarkers={tradeMarkers}
         />
       </div>
-      
       
       {/* Arena Results Overlay */}
       <AnimatePresence>
@@ -162,7 +266,7 @@ const Index = () => {
                 animate={{ opacity: 1 }}
                 transition={{ delay: 1 }}
               >
-                Next arena starting soon...
+                Results will be shown for 10 seconds...
               </motion.div>
             </div>
           </motion.div>

@@ -16,11 +16,13 @@ export const ROUND_TYPES: RoundType[] = [
   }
 ];
 
+export type GameState = 'initial_countdown' | 'active' | 'ended' | 'between_rounds_countdown';
+
 export const useGameLogic = () => {
   const [solPrice, setSolPrice] = useState(180.45);
-  const [isArenaActive, setIsArenaActive] = useState(true);
+  const [gameState, setGameState] = useState<GameState>('initial_countdown');
   const [arenaTimer, setArenaTimer] = useState(60);
-  const [arenaEnded, setArenaEnded] = useState(false);
+  const [countdownTimer, setCountdownTimer] = useState(10);
   const [currentRound, setCurrentRound] = useState(0);
   const [roundType, setRoundType] = useState<RoundType>(ROUND_TYPES[0]);
   const [winner, setWinner] = useState<{username: string, pnl: number, winnings: number} | null>(null);
@@ -45,7 +47,7 @@ export const useGameLogic = () => {
   
   // SOL price simulation
   useEffect(() => {
-    if (!isArenaActive || arenaEnded) return;
+    if (gameState !== 'active') return;
 
     const interval = setInterval(() => {
       setSolPrice(prev => {
@@ -58,18 +60,37 @@ export const useGameLogic = () => {
     }, 200);
 
     return () => clearInterval(interval);
-  }, [isArenaActive, arenaEnded]);
+  }, [gameState]);
+
+  // Initial countdown timer
+  useEffect(() => {
+    if (gameState !== 'initial_countdown' && gameState !== 'between_rounds_countdown') return;
+
+    const timer = setInterval(() => {
+      setCountdownTimer(prev => {
+        if (prev <= 1) {
+          // Start the arena
+          setGameState('active');
+          setArenaTimer(60);
+          setCountdownTimer(10);
+          return 10;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [gameState]);
 
   // Arena timer
   useEffect(() => {
-    if (!isArenaActive) return;
+    if (gameState !== 'active') return;
 
     const timer = setInterval(() => {
       setArenaTimer(prev => {
         if (prev <= 1) {
           // Arena ends - close all positions
-          setArenaEnded(true);
-          setIsArenaActive(false);
+          setGameState('ended');
           
           // Generate final leaderboard
           const players = ['SolKing', 'DegenApe', 'PerpMaster', 'LongBoi', 'ShortSqueeze', 'DiamondHands'];
@@ -98,27 +119,34 @@ export const useGameLogic = () => {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [isArenaActive]);
+  }, [gameState]);
 
-  // Reset arena after results
+  // Handle game state transitions after results
   useEffect(() => {
-    if (arenaEnded) {
-      const resetTimer = setTimeout(() => {
-        setArenaEnded(false);
-        setIsArenaActive(true);
-        setWinner(null);
-        setUserPosition(null);
-        setTradeMarkers([]);
-        setTotalPot(12847.23);
-      }, 8000);
+    if (gameState === 'ended') {
+      // Show results for 10 seconds, then transition to between rounds countdown
+      const resultsTimer = setTimeout(() => {
+        setGameState('between_rounds_countdown');
+        setCountdownTimer(10);
+      }, 10000);
 
-      return () => clearTimeout(resetTimer);
+      return () => clearTimeout(resultsTimer);
     }
-  }, [arenaEnded]);
+  }, [gameState]);
+
+  // Reset game state between rounds
+  useEffect(() => {
+    if (gameState === 'between_rounds_countdown') {
+      setWinner(null);
+      setUserPosition(null);
+      setTradeMarkers([]);
+      setTotalPot(12847.23);
+    }
+  }, [gameState]);
 
   // Update user position PnL
   useEffect(() => {
-    if (userPosition && isArenaActive) {
+    if (userPosition && gameState === 'active') {
       const priceDiff = solPrice - userPosition.entryPrice;
       const multiplier = userPosition.type === 'Long' ? 1 : -1;
       const pnlPercent = (priceDiff / userPosition.entryPrice) * multiplier * userPosition.leverage * 100;
@@ -130,11 +158,11 @@ export const useGameLogic = () => {
         setUserPosition(null); // Liquidated
       }
     }
-  }, [solPrice, userPosition, isArenaActive]);
+  }, [solPrice, userPosition, gameState]);
 
   // Generate random trade markers with realistic trading behavior
   useEffect(() => {
-    if (!isArenaActive) return;
+    if (gameState !== 'active') return;
 
     const interval = setInterval(() => {
       if (Math.random() < 0.25) { // 25% chance
@@ -172,10 +200,10 @@ export const useGameLogic = () => {
     }, Math.random() * 4000 + 2000); // 2-6 seconds
 
     return () => clearInterval(interval);
-  }, [isArenaActive, solPrice]);
+  }, [gameState, solPrice]);
 
   const openLong = useCallback((size: number, leverage: number) => {
-    if (isArenaActive && !arenaEnded && !userPosition) {
+    if (gameState === 'active' && !userPosition) {
       const liquidationPrice = solPrice * (1 - 0.9 / leverage); // 90% loss = liquidation
       
       setUserPosition({
@@ -201,10 +229,10 @@ export const useGameLogic = () => {
       
       console.log(`Opened Long position: $${size} at $${solPrice.toFixed(2)} with ${leverage}x leverage`);
     }
-  }, [isArenaActive, arenaEnded, solPrice, userPosition]);
+  }, [gameState, solPrice, userPosition]);
 
   const openShort = useCallback((size: number, leverage: number) => {
-    if (isArenaActive && !arenaEnded && !userPosition) {
+    if (gameState === 'active' && !userPosition) {
       const liquidationPrice = solPrice * (1 + 0.9 / leverage); // 90% loss = liquidation
       
       setUserPosition({
@@ -230,13 +258,13 @@ export const useGameLogic = () => {
       
       console.log(`Opened Short position: $${size} at $${solPrice.toFixed(2)} with ${leverage}x leverage`);
     }
-  }, [isArenaActive, arenaEnded, solPrice, userPosition]);
+  }, [gameState, solPrice, userPosition]);
 
   return {
     solPrice,
-    isArenaActive,
+    gameState,
     arenaTimer,
-    arenaEnded,
+    countdownTimer,
     winner,
     leaderboard,
     roundType,
@@ -245,5 +273,8 @@ export const useGameLogic = () => {
     tradeMarkers,
     openLong,
     openShort,
+    // Legacy support for existing components
+    isArenaActive: gameState === 'active',
+    arenaEnded: gameState === 'ended',
   };
 };

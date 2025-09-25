@@ -1,4 +1,4 @@
-# DegenWars.fun – Trade to Survive, Battle to Win
+# levs.fun – Ultimate Leverage Battle
 
 ## Problem
 
@@ -12,9 +12,9 @@ Beginners struggle – trades feel complicated, and they can't even see winning 
 
 There's no fun, no game, no thrill in just clicking charts alone.
 
-## The DegenWars Solution
+## The levs.fun Solution
 
-Turn trading into a competitive, gamified battle.
+Turn leverage trading into a competitive, gamified battle.
 Where losers don't just lose alone… but fuel the winner's victory.
 
 ## Core Concept
@@ -44,15 +44,15 @@ Instant fun. Instant stakes. Instant dopamine.
 - Winner takes the full prize pool.
 - Skill, timing, and nerve collide.
 
-## Why DegenWars.fun
+## Why levs.fun
 
-- **Gamifies trading** → no more boring charts.
+- **Gamifies leverage trading** → no more boring charts.
 - **Social & competitive** → trade against others, not just the market.
 - **Beginner-friendly** → easy entry, fun learning by watching winners.
 - **High stakes, fast dopamine** → every round has a pot, and only one can survive.
 
 ## Tagline Ideas
 
-- "Don't just trade. Battle."
+- "Don't just trade. Leverage up."
 - "One chart. One pot. One winner."
-- "Where degens become champions."
+- "Where leverage meets legend."

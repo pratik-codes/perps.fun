@@ -138,13 +138,13 @@ export const StatsBar = () => {
   return (
     <>
       {/* Notification Bar */}
-      <div className="bg-notificationRed text-white px-4 py-2 text-sm">
+      {/* <div className="bg-notificationRed text-white px-4 py-2 text-sm">
         <div className="flex items-center justify-center space-x-2">
           <span>⚠️</span>
           <span>372ms</span>
           <span>Unstable connection may delay trades</span>
         </div>
-      </div>
+      </div> */}
 
       {/* Stats Bar */}
       <div className="bg-card border-b border-border p-4">

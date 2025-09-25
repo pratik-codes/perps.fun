@@ -14,25 +14,25 @@ export const Header = () => {
       <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-accent/5 animate-pulse"></div>
       
       <div className="relative flex items-center space-x-6">
-        {/* Game Logo */}
+        {/* Game Logo - levs.fun */}
         <motion.div 
-          className="flex items-center space-x-2"
+          className="flex items-center space-x-3"
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 0.5 }}
         >
-          <div className="text-3xl font-orbitron font-black">
-            <span className="text-primary neon-flicker drop-shadow-lg">⚡DEGEN</span>
-            <span className="text-accent glow-purple">W★ARS</span>
+          <div className="flex items-center space-x-1">
+            {/* Main logo image */}
+            <img 
+              src="/levs-logo-hori.png" 
+              alt="levs.fun Logo" 
+              className="h-12 w-auto object-contain"
+            />
           </div>
+          
           <div className="px-2 py-1 bg-levelGold/20 border border-levelGold rounded-md">
-            <span className="text-xs font-pixel text-levelGold font-bold">BETA v1.1</span>
+            <span className="text-xs font-pixel text-levelGold font-bold">BETA v1.0</span>
           </div>
-
-        <div className="flex items-center space-x-1 px-2 py-1 bg-success/20 border border-success/50 rounded">
-          <span className="w-2 h-2 bg-success rounded-full pulse-green"></span>
-          <span className="text-xs font-pixel text-success">1,337 ONLINE</span>
-        </div>
         </motion.div>
 
 
